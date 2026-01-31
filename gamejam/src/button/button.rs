@@ -9,7 +9,6 @@ pub struct Button {
     pub text: String,
     pub hovered: bool,
     pub action: bool,
-    pub count: u32,
 }
 
 impl Button {
@@ -19,7 +18,6 @@ impl Button {
             text: text.to_string(), // button text
             hovered: false, // hover state
             action: act, //checks if specific button was pressed or not
-            count: 0,
         }
     }
 
