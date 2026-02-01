@@ -24,6 +24,7 @@ Medicine
 Bottle full of medicine
 390.0
 180.0
+5
 Flower Pot
 1
 0
@@ -36,11 +37,10 @@ Medicine
 Hi
 0
 3
+Dummy
 1
-2
-2
-0
-2
+4
+3
 --npc1
 380.0
 270.0
@@ -48,4 +48,13 @@ Hi
 300.0
 200.0
 
+500.0
+270.0
+1
+2
+2
+0
+1
+0
+1
 --crime2

@@ -112,18 +112,38 @@ impl GameState {
             for k in 0..self.reader.currMap.interactable.len() {
                 let hitbox1 = self.reader.currMap.interactable[k].hitbox;
                 text!("hi", x = 0, y = 10, color = 0xffffffff);
-                if self.reader.currMap.interactable[k].hover(hitbox1, x, y) &&
-                self.inven.invenB[n].hold && m.just_released() && self.reader.currMap.interactable[k].text == ""
-                && self.reader.currCrime.answerKey[k] == self.inven.inven[n].name &&
-                self.reader.currCrime.answerTime[k] == self.currTime
-                {
-                    text!("hi", x = 20, y = 10, color = 0xffffffff);
-                    self.alibiOrder[k] = self.inven.inven[n].name.clone();
-                    self.alibiTime[k] = self.currTime;
-                    self.inven.inven.remove(n);
-                    self.inven.invenB.remove(n);
-                    self.removed = true;
-                } 
+                text!("bye", x = 0, y = 10, color = 0xffffffff);
+
+                if k > self.reader.currCrime.answerKey.len() {
+                    if self.reader.currMap.interactable[k].hover(hitbox1, x, y) &&
+                    self.inven.invenB[n].hold && m.just_released() && self.reader.currMap.interactable[k].text == ""
+                    && self.reader.currCrime.answerKey[k - (self.reader.currCrime.extraInt - 1)] == self.inven.inven[n].name &&
+                    self.reader.currCrime.answerTime[k- (self.reader.currCrime.extraInt - 1)] == self.currTime
+                    {
+
+                        text!("hi", x = 20, y = 10, color = 0xffffffff);
+                        self.alibiOrder[k - (self.reader.currCrime.extraInt - 1)] = self.inven.inven[n].name.clone();
+                        self.alibiTime[k - (self.reader.currCrime.extraInt - 1)] = self.currTime;
+                        self.inven.inven.remove(n);
+                        self.inven.invenB.remove(n);
+                        self.removed = true;
+                    } 
+                } else {
+                    if self.reader.currMap.interactable[k].hover(hitbox1, x, y) &&
+                    self.inven.invenB[n].hold && m.just_released() && self.reader.currMap.interactable[k].text == ""
+                    && self.reader.currCrime.answerKey[k] == self.inven.inven[n].name &&
+                    self.reader.currCrime.answerTime[k] == self.currTime
+                    {
+
+                        text!("hi", x = 20, y = 10, color = 0xffffffff);
+                        self.alibiOrder[k] = self.inven.inven[n].name.clone();
+                        self.alibiTime[k] = self.currTime;
+                        self.inven.inven.remove(n);
+                        self.inven.invenB.remove(n);
+                        self.removed = true;
+                    } 
+                }
+                
                 text!("bye", x = 50, y = 10, color = 0xffffffff);
             }
 
@@ -251,6 +271,8 @@ impl GameState {
                         self.dayCheck = self.reader.currCrime.availPos.clone();
                         self.alibiOrder = vec!["".to_string(); self.reader.currCrime.answerPos.len()];
                         self.alibiTime = vec![0; self.reader.currCrime.answerTime.len()];
+                        self.inven.inven.push(Item::new("Dummy", "fake of the suspect"));
+                        self.inven.setButton();
                         self.uiButtons[n].action = false;
                     }
                     //left button on the time, if the current time is 0 (the earliest time),
@@ -325,11 +347,18 @@ impl GameState {
             // }
             text!("{}", self.reader.currCrime.availPos[0]; x = 10, y = 50, font = "TENPIXELS", color = 0x2d1e1eff);
             for n in 0..self.alibiOrder.len() {
+                text!("{:?}", self.reader.currCrime.answerKey[n]; x = 30, y = yoff + 300, font = "TENPIXELS", color = 0x2d1e1eff);
                 text!("{:?}", self.alibiOrder[n]; x = 20, y = yoff + 300, font = "TENPIXELS", color = 0x2d1e1eff);
-                yoff += 20;
                 text!("{}", self.alibiTime[n]; x = 10, y = yoff + 300, font = "TENPIXELS", color = 0x2d1e1eff);
+                text!("{}", self.reader.currCrime.answerTime[n]; x = 120, y = yoff + 300, font = "TENPIXELS", color = 0x2d1e1eff);
+                yoff += 20;
             }
 
+            let mut ys = 50;
+            for n in 0..self.reader.currMap.interactable.len() {
+                text!("{:?}", self.reader.currMap.interactable[n].text; x = 200, y = ys + 300, font = "TENPIXELS", color = 0x2d1e1eff);
+                ys += 20;
+            }
             if self.dayStart {
                 match self.day {
                     1 => {

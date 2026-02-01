@@ -14,6 +14,7 @@ use turbo::time::tick;
 pub struct Crime {
     pub name: String,
     pub detail: Vec<String>,
+    pub extraInt: usize,
     pub availPos: Vec<usize>,
     pub answerKey: Vec<String>,
     pub answerTime: Vec<usize>,
@@ -25,6 +26,7 @@ impl Crime {
         Self {
             name: name.to_string(),
             detail: detail,
+            extraInt: 0,
             availPos: Vec::new(),
             answerKey: Vec::new(),
             answerTime: Vec::new(),

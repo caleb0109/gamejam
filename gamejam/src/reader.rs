@@ -119,8 +119,10 @@ impl Reader {
             self.currMap.interactable.push(Button::new(&iName, (x,y, 20.0,20.0), false));
         }
         
+        let answerTotal = self.dLines[self.current_line_d].parse::<usize>().unwrap();
+        self.current_line_d += 1;
         //for loop to get the answer key, time, and position
-        for n in 0..itemNum {
+        for n in 0..answerTotal {
             self.currCrime.answerKey.push(self.dLines[self.current_line_d].clone());
             self.current_line_d += 1;
             self.currCrime.answerTime.push(self.dLines[self.current_line_d].parse::<usize>().unwrap());
@@ -129,13 +131,8 @@ impl Reader {
             self.current_line_d += 1;
         }
 
-        //for loop to get the positions that are able to be interacted with during a specific time
-        for n in 0..itemNum {
-            self.currCrime.availPos.push(self.dLines[self.current_line_d].parse::<usize>().unwrap());
-            self.current_line_d +=1;
-        }
-
         let extraInt = self.dLines[self.current_line_d].parse::<i32>().unwrap();
+        self.currCrime.extraInt = extraInt as usize;
         self.current_line_d += 1;
         for n in 0..extraInt {
             let name = self.dLines[self.current_line_d].clone();
@@ -147,6 +144,12 @@ impl Reader {
             self.current_line_d += 1;
 
             self.currMap.interactable.push(Button::new(&name, (x,y, 20.0,20.0), false));
+        }
+
+                //for loop to get the positions that are able to be interacted with during a specific time
+        for n in 0..self.currMap.interactable.len() {
+            self.currCrime.availPos.push(self.dLines[self.current_line_d].parse::<usize>().unwrap());
+            self.current_line_d +=1;
         }
 
 
