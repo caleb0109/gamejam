@@ -27,12 +27,12 @@ impl Button {
     //will add a additional variable in parameter to see check if
     //the button thats being drawn is an ingredient or not
     //(ex. draw(&self, name: &str))
-    pub fn draw(&self, text: String) {
+    pub fn draw(&self) {
         //draws button and highlighted button
         let highlight = format!("{}_highlight", &self.text);
         match self.hovered {
             true => sprite!(&highlight, x = self.hitbox.0 - 1.0, y = self.hitbox.1 - 1.0),
-            false => sprite!(&text, x = self.hitbox.0, y = self.hitbox.1)
+            false => sprite!(&self.text, x = self.hitbox.0, y = self.hitbox.1)
         };
     }
 

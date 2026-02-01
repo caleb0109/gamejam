@@ -31,9 +31,9 @@ impl GameState {
             inven: inventoryy::Inventory::new(),
             reader: reader::Reader::new(),
             uiButtons: [
-                Button::new("nextCrime", (350.0,400.0, 100.0, 40.0), false),
-                Button::new("leftTime", (80.0, 120.0, 20.0,10.0), false),
-                Button::new("rightTime",(160.0, 120.0, 20.0,10.0), false),
+                Button::new("nextCrime", (367.0, 445.0, 154.0, 28.0), false),
+                Button::new("leftTime", (23.0, 115.0, 39.0, 26.0), false),
+                Button::new("rightTime",(118.0, 115.0, 39.0, 26.0), false),
             ],
 
             day: 0,
@@ -52,7 +52,10 @@ impl GameState {
         let y = my as f32;
 
         
-        rect!(x = 350, y = 90, w = 220, h = 220, color = 0x0000ffff, rotation = 45);
+        //rect!(x = 350, y = 90, w = 220, h = 220, color = 0x0000ffff, rotation = 45);
+        
+        sprite!("ui", x = 0, y = 0);
+        sprite!("bg", x = 0, y = 0);
 
         let mut yOffset = 180.0;
         
@@ -205,18 +208,18 @@ impl GameState {
             }
             //just drawing
             if n == 0 {
-                self.uiButtons[n].tempDraw("day");
+                self.uiButtons[n].draw();
             } else {
-                self.uiButtons[n].tempDraw("hi");
+                self.uiButtons[n].draw();
             }
         }
 
         //bunch of text print for suspect ID and report
-        text!("Suspect: {}", self.reader.currCrime.name; x = 600, y = 100, font = "TENPIXELS", color = 0x2d1e1eff);
-        let mut yOffset = 120;
+        text!("Suspect: {}", self.reader.currCrime.name; x = 735, y = 153, font = "TENPIXELS", color = 0x2d1e1eff);
+        let mut yOffset = 180;
         for n in 0..self.reader.currCrime.detail.len() {
-            text!(self.reader.currCrime.detail[n].as_str(), x = 600, y = yOffset, font = "TENPIXELS", color = 0x2d1e1eff);
-            yOffset += 20;
+            text_box!(self.reader.currCrime.detail[n].as_str(), x = 735, y = yOffset, w = 133, h = 50, font = "TENPIXELS", color = 0x2d1e1eff);
+            yOffset += 60;
         }
         
         
