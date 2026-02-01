@@ -18,7 +18,7 @@ impl Inventory {
 
     pub fn setButton(&mut self) {
         for n in 0..self.inven.len() {
-            self.invenB.push(Button::new("inven", (70.0, 180.0, 45.0, 45.0), false));
+            self.invenB.push(Button::new("inven", (34.0, 180.0, 51.0, 51.0), false));
         }
     }
 }

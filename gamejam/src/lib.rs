@@ -58,6 +58,14 @@ impl GameState {
         sprite!("bg", x = 0, y = 0);
 
         let mut yOffset = 180.0;
+
+        if self.reader.currCrime.name == "kai" {
+            sprite!("kai", x = 758, y = 45);
+        } else if self.reader.currCrime.name == "mia" {
+            sprite!("mia", x = 758, y = 45);
+        } else {
+            sprite!("emptyportrait", x = 758, y = 45);
+        }
         
         //checking inventory
         for n in 0..self.inven.inven.len() {
@@ -65,18 +73,18 @@ impl GameState {
             
             //if its the very first item, give it the first spot
             if n == 0 {
-                self.inven.invenB[n].hitbox.0 = 70.0;
+                self.inven.invenB[n].hitbox.0 = 34.0;
                 self.inven.invenB[n].hitbox.1 = 180.0;
             }
             //if its an even number, the x position stays the same, but the y position goes lower 
             else if n % 2 == 0 {
-                yOffset += 60.0;
-                self.inven.invenB[n].hitbox.0 = 70.0;
+                yOffset += 58.0;
+                self.inven.invenB[n].hitbox.0 = 34.0;
                 self.inven.invenB[n].hitbox.1 = yOffset; 
             }
             //otherwise if its an odd number (the right hand side of the grid), move the x pos over 
             else {
-                self.inven.invenB[n].hitbox.0 = 130.0;
+                self.inven.invenB[n].hitbox.0 = 92.0;
                 self.inven.invenB[n].hitbox.1 = yOffset;
                  
             }
