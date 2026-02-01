@@ -16,12 +16,16 @@ struct GameState {
     // Add fields here
     pub inven: inventoryy::Inventory,
     pub reader: reader::Reader,
-    uiButtons:[Button; 3],
+    uiButtons:[Button; 4],
 
     pub day: i32,
     pub currTime: usize,
     pub invenHold: bool,
     pub invenCheck: usize,
+    pub dayCheck: Vec<usize>,
+    pub alibiTime: Vec<usize>,
+    pub alibiOrder: Vec<String>,
+    pub removed: bool,
 }
 
 impl GameState {
@@ -34,12 +38,17 @@ impl GameState {
                 Button::new("nextCrime", (367.0, 445.0, 154.0, 28.0), false),
                 Button::new("leftTime", (23.0, 115.0, 39.0, 26.0), false),
                 Button::new("rightTime",(118.0, 115.0, 39.0, 26.0), false),
+                Button::new("nextCrime", (550.0, 445.0, 154.0, 28.0), false),
             ],
 
             day: 0,
             currTime: 0,
             invenHold: false,
             invenCheck: 0,
+            dayCheck: Vec::new(),
+            alibiTime: Vec::new(),
+            alibiOrder: Vec::new(),
+            removed: false,
         }
     }
     pub fn update(&mut self) {
@@ -88,14 +97,23 @@ impl GameState {
                 text!("hi", x = 0, y = 10, color = 0xffffffff);
                 if self.reader.currMap.interactable[k].hover(hitbox1, x, y) &&
                 self.inven.invenB[n].hold && m.just_released() && self.reader.currMap.interactable[k].text == ""
+                && self.reader.currCrime.answerKey[k] == self.inven.inven[n].name &&
+                self.reader.currCrime.answerTime[k] == self.currTime
                 {
                     text!("hi", x = 20, y = 10, color = 0xffffffff);
-
+                    self.alibiOrder[k] = self.inven.inven[n].name.clone();
+                    self.alibiTime[k] = self.currTime;
+                    self.inven.inven.remove(n);
+                    self.inven.invenB.remove(n);
+                    self.removed = true;
                 } 
                 text!("bye", x = 50, y = 10, color = 0xffffffff);
             }
 
-            
+            if self.removed {
+                self.removed = false;
+                break;
+            }
             //keeping the origin in case i need to make the item return to its original spot
             let origin = self.inven.invenB[n].hitbox;
 
@@ -144,6 +162,13 @@ impl GameState {
         for n in 0..self.reader.currMap.interactable.len() {
             select = self.reader.currMap.interactable[n].check(select);
 
+            if self.day > 0 {
+                for l in 0..self.reader.currCrime.availPos.len() {
+                    if self.reader.currCrime.availPos[l] != self.currTime {
+                        self.reader.currMap.interactable[l].action = false;
+                    }
+                }
+             }
             //if the current item on the map is being interacted with
             if self.reader.currMap.interactable[n].action {
                 //if the item has nothing there (why its an empty string), then nothing will happen
@@ -179,6 +204,9 @@ impl GameState {
                     0 => {
                         self.day += 1;
                         self.reader.changeLevel(self.day);
+                        self.dayCheck = self.reader.currCrime.availPos.clone();
+                        self.alibiOrder = vec!["".to_string(); self.reader.currCrime.answerPos.len()];
+                        self.alibiTime = vec![0; self.reader.currCrime.answerTime.len()];
                         self.uiButtons[n].action = false;
                     }
                     //left button on the time, if the current time is 0 (the earliest time),
@@ -203,6 +231,10 @@ impl GameState {
                             self.currTime += 1;
                             self.uiButtons[n].action = false;
                         }
+                    }
+                    3 => {
+                        self.reader.currCrime.alibiCheck(self.alibiOrder.clone(), self.alibiTime.clone());
+                        self.uiButtons[n].action = false;
                     }
                     _=> {}
                 }
@@ -238,11 +270,18 @@ impl GameState {
                 if self.reader.currCrime.availPos[l] == self.currTime {
                     self.reader.currMap.interactable[l].tempDraw("no");
                     text!("{}", self.reader.currMap.interactable[l].text; x = 100, y = yoff, font = "TENPIXELS", color = 0x2d1e1eff);
+                } else {
+                    self.reader.currMap.interactable[l].tempDraw("hi");
                 }
                 text!("{}", self.reader.currCrime.availPos[l]; x = 10, y = yoff, font = "TENPIXELS", color = 0x2d1e1eff);
                 yoff += 10;
             }
             text!("{}", self.reader.currCrime.availPos[0]; x = 10, y = 50, font = "TENPIXELS", color = 0x2d1e1eff);
+            for n in 0..self.alibiOrder.len() {
+                text!("{:?}", self.alibiOrder[n]; x = 20, y = yoff + 300, font = "TENPIXELS", color = 0x2d1e1eff);
+                yoff += 20;
+                text!("{}", self.alibiTime[n]; x = 10, y = yoff + 300, font = "TENPIXELS", color = 0x2d1e1eff);
+            }
         }
 
     }
