@@ -82,15 +82,14 @@ impl GameState {
             //still working on this
             for k in 0..self.reader.currMap.interactable.len() {
                 let hitbox1 = self.reader.currMap.interactable[k].hitbox;
-                let hitbox2 = self.inven.invenB[n].hitbox;
-
+                text!("hi", x = 0, y = 10, color = 0xffffffff);
                 if self.reader.currMap.interactable[k].hover(hitbox1, x, y) &&
-                self.inven.invenB[n].hover(hitbox2, x, y) && m.just_released() &&
-                self.reader.currMap.interactable[k].text == "" && self.invenHold
+                self.inven.invenB[n].hold && m.just_released() && self.reader.currMap.interactable[k].text == ""
                 {
-                    self.inven.inven.remove(k);
+                    text!("hi", x = 20, y = 10, color = 0xffffffff);
 
                 } 
+                text!("bye", x = 50, y = 10, color = 0xffffffff);
             }
 
             
@@ -235,6 +234,7 @@ impl GameState {
             for l in 0..self.reader.currCrime.availPos.len() {
                 if self.reader.currCrime.availPos[l] == self.currTime {
                     self.reader.currMap.interactable[l].tempDraw("no");
+                    text!("{}", self.reader.currMap.interactable[l].text; x = 100, y = yoff, font = "TENPIXELS", color = 0x2d1e1eff);
                 }
                 text!("{}", self.reader.currCrime.availPos[l]; x = 10, y = yoff, font = "TENPIXELS", color = 0x2d1e1eff);
                 yoff += 10;
