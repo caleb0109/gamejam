@@ -178,10 +178,10 @@ impl Reader {
                     font = "FIVEPIXELS",
                     color = 0xfae3deff,
                     fixed = true,
-                    width = 200,
-                    height = 35,
-                    x =  100,
-                    y = 400,  
+                    width = 479,
+                    height = 90,
+                    x =  259,
+                    y = 382,  
                     //end = time/5         
                 }
             self.assessLine();
