@@ -21,4 +21,6 @@ impl Inventory {
             self.invenB.push(Button::new("inven", (34.0, 180.0, 51.0, 51.0), false));
         }
     }
+
+    
 }

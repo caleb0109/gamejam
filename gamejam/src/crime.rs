@@ -1,5 +1,8 @@
 use crate::item::Item;
 
+use turbo::*;
+use turbo::text_box::TextBox;
+use turbo::time::tick;
 #[turbo::serialize]
 
 //Name of the suspect
@@ -27,5 +30,12 @@ impl Crime {
             answerTime: Vec::new(),
             answerPos: Vec::new(),
         }
+    }
+
+    pub fn alibiCheck (&mut self, alibiItem: Vec<String>, alibiTime: Vec<usize>) {
+        if self.answerKey == alibiItem && self.answerTime == alibiTime{
+            text!("YAY",  x = 10, y =  300, font = "TENPIXELS", color = 0x2d1e1eff);
+        }
+        text!("BOOO",  x = 50, y =  300, font = "TENPIXELS", color = 0x2d1e1eff);
     }
 }

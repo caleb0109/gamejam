@@ -59,7 +59,7 @@ impl Button {
             self.hitbox.1 + (self.hitbox.3/2.0) - 3.0);
 
         // Draw button
-        if self.text == "no" {
+        if name == "no" {
             rect!(x = self.hitbox.0, y = self.hitbox.1, w = self.hitbox.2, h = self.hitbox.3, color = 0x22406eff);
         } else {
             rect!(x = self.hitbox.0, y = self.hitbox.1, w = self.hitbox.2, h = self.hitbox.3, color = c1);
