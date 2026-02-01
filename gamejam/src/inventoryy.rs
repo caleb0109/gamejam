@@ -2,6 +2,7 @@ use crate::item::Item;
 use crate::button::button::Button;
 
 #[turbo::serialize]
+//Inventory and the invetory button (so you can interact with it)
 pub struct Inventory {
     pub inven: Vec<Item>,
     pub invenB: Vec<Button>,

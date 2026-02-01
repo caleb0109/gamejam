@@ -9,6 +9,12 @@ use crate::crime::Crime;
 
 #[turbo::serialize]
 
+//script reader line
+//data reader line
+//current line for script
+//current line for data
+//current Crime we are at (current level, current day, same shit)
+//current Map we are on      ^
 pub struct Reader {
     pub sLines: Vec<String>,
     pub dLines: Vec<String>,
@@ -30,6 +36,7 @@ impl Reader {
         }
     }
 
+    //similar to whats in Pocket_Pet and Boil & Bubble
     pub fn changeLevel(&mut self, day: i32) {
         match day {
             1 => {
@@ -50,6 +57,21 @@ impl Reader {
         }
     }
 
+    //all for Data
+    ///ORDER OF THE DATA
+    /// SUSPECT NAME
+    /// AMOUNT OF LINES FOR THE REPORT
+    /// REPORT LINE
+    /// REPORT TIME STAMP
+    /// AMOUNT OF ITEMS IN THE MAP
+    /// ITEM NAME
+    /// ITEM DESCRIPTION
+    /// ITEM X POSITION
+    /// ITEM Y POSITION
+    /// ANSWERKEY ORDER
+    /// ANSWERTIME ORDER
+    /// ANSWERPOSTION ORDER
+    /// AVAILABLEPOSITION ORDER
     pub fn updateData(&mut self) {
         let name = self.dLines[self.current_line_d].clone();
         self.currCrime.name = name;

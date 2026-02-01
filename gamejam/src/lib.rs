@@ -23,6 +23,7 @@ struct GameState {
     pub invenHold: bool,
     pub invenCheck: usize,
 }
+
 impl GameState {
     pub fn new() -> Self {
         // initialize your game state
@@ -54,21 +55,31 @@ impl GameState {
         rect!(x = 350, y = 90, w = 220, h = 220, color = 0x0000ffff, rotation = 45);
 
         let mut yOffset = 180.0;
+        
+        //checking inventory
         for n in 0..self.inven.inven.len() {
             select = self.inven.invenB[n].check(select);
             
+            //if its the very first item, give it the first spot
             if n == 0 {
                 self.inven.invenB[n].hitbox.0 = 70.0;
                 self.inven.invenB[n].hitbox.1 = 180.0;
-            } else if n % 2 == 0 {
+            }
+            //if its an even number, the x position stays the same, but the y position goes lower 
+            else if n % 2 == 0 {
                 yOffset += 60.0;
                 self.inven.invenB[n].hitbox.0 = 70.0;
                 self.inven.invenB[n].hitbox.1 = yOffset; 
-            } else {
+            }
+            //otherwise if its an odd number (the right hand side of the grid), move the x pos over 
+            else {
                 self.inven.invenB[n].hitbox.0 = 130.0;
                 self.inven.invenB[n].hitbox.1 = yOffset;
                  
             }
+
+            //trying to check if the inventory item and the interactable space on the map is overlapping
+            //still working on this
             for k in 0..self.reader.currMap.interactable.len() {
                 let hitbox1 = self.reader.currMap.interactable[k].hitbox;
                 let hitbox2 = self.inven.invenB[n].hitbox;
@@ -81,13 +92,21 @@ impl GameState {
             }
 
             
+            //keeping the origin in case i need to make the item return to its original spot
             let origin = self.inven.invenB[n].hitbox;
 
+            //if there is an action being done to the item (ie. mouse press/mouse hold) and you already aren't holding an item,
+            //make it so that you are definitively holding that item only
             if self.inven.invenB[n].action && !self.invenHold {
                 self.invenHold = true;
                 self.invenCheck = n
             }
 
+            //if an action is being done on an item and you are holding something, but it isn't that specific item
+            //or if you aren't holding an item
+            //or if an action isn't being done on an item and you are holding something
+            //make the action on that specific item false along with the hold check and make it go back
+            //to its original spot
             if self.inven.invenB[n].action && self.invenHold && self.invenCheck != n
             || !self.invenHold
             || !self.inven.invenB[n].action && self.invenHold {
@@ -95,28 +114,44 @@ impl GameState {
                 self.inven.invenB[n].hold = false;
                 self.inven.invenB[n].hitbox = origin;
             }
+
+            //if the hold check is true, make the item stick to the mouse regardless if you are
+            //in the hitbox or not
             if self.inven.invenB[n].hold {
                 self.inven.invenB[n].hitbox.0 = x - (self.inven.invenB[n].hitbox.2/2.0);
                 self.inven.invenB[n].hitbox.1 = y - (self.inven.invenB[n].hitbox.3/2.0);
             }
 
+            //once you release the mouse, the hold, action, invenHold, and inventory id check all becomes false
             if m.just_released() {
                 self.inven.invenB[n].action = false;
                 self.inven.invenB[n].hold = false;
                 self.invenHold = false;
                 self.invenCheck = 0;
             }
+
+            //temp draw the item
             self.inven.invenB[n].tempDraw("name");
             text!("{}", self.inven.inven[n].name; x = self.inven.invenB[n].hitbox.0,y = self.inven.invenB[n].hitbox.0,);
         }
 
+
+        //checking all the interactable items on the map
         for n in 0..self.reader.currMap.interactable.len() {
             select = self.reader.currMap.interactable[n].check(select);
+
+            //if the current item on the map is being interacted with
             if self.reader.currMap.interactable[n].action {
+                //if the item has nothing there (why its an empty string), then nothing will happen
                 if self.reader.currMap.interactable[n].text == "" {
                     self.reader.currMap.interactable[n].action = false;
                     break;
-                } else {
+                } 
+                //otherwise, assuming its an item, push the item into the inventory
+                //load the setButton, so that the inventory shows the new uploaded item
+                //and make the interactable spot empty.
+                //if you want to make a check for a dialogue one, just use an if statement to check the text of that spot
+                else {
                     self.inven.inven.push(self.reader.currMap.items[n].clone());
                     self.inven.setButton();
                     self.reader.currMap.interactable[n].text = "".to_string();
@@ -124,18 +159,26 @@ impl GameState {
                              
                     }
             }
+            //temp draw
             self.reader.currMap.interactable[n].tempDraw("hi");
         }
         
+        //checking all UIButtons
         for n in 0..self.uiButtons.len() {
             select = self.uiButtons[n].check(select);
+
+            //if there was an action done on an UIButton
             if self.uiButtons[n].action {
+                //check which specific one
                 match n {
+                    //this one is the serve alibi, proceeds day and level data
                     0 => {
                         self.day += 1;
                         self.reader.changeLevel(self.day);
                         self.uiButtons[n].action = false;
                     }
+                    //left button on the time, if the current time is 0 (the earliest time),
+                    //then it does nothing, otherwise, it'll go down to the time earlier than current
                     1 => {
                         if self.currTime == 0 {
                             self.uiButtons[n].action = false;
@@ -146,6 +189,8 @@ impl GameState {
                         }
                         
                     }
+                    //right button on the time, if the current time is the max, does nothing
+                    //otherwise, it'll increment to the later time
                     2 => {
                         if self.currTime == self.reader.currMap.timeP.len()-1{
                             self.uiButtons[n].action = false;
@@ -158,6 +203,7 @@ impl GameState {
                     _=> {}
                 }
             }
+            //just drawing
             if n == 0 {
                 self.uiButtons[n].tempDraw("day");
             } else {
@@ -165,6 +211,7 @@ impl GameState {
             }
         }
 
+        //bunch of text print for suspect ID and report
         text!("Suspect: {}", self.reader.currCrime.name; x = 600, y = 100, font = "TENPIXELS", color = 0x2d1e1eff);
         let mut yOffset = 120;
         for n in 0..self.reader.currCrime.detail.len() {
@@ -173,6 +220,7 @@ impl GameState {
         }
         
         
+        //only prints if the day is greater than 0 because some data doesn't exist till day 1
         if self.day > 0 {
             if self.reader.currMap.timeP[self.currTime] > 0{
                 text!("{} AM", self.reader.currMap.timeP[self.currTime]; x = 110, y = 120, font = "TENPIXELS", color = 0x2d1e1eff);

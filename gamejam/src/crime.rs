@@ -2,6 +2,12 @@ use crate::item::Item;
 
 #[turbo::serialize]
 
+//Name of the suspect
+//report/detail of their crime
+//the positions of the items the user are available to interact with
+//the order of which the items should be in
+//which time/hour the item should be in
+//which position the item should be in
 pub struct Crime {
     pub name: String,
     pub detail: Vec<String>,
