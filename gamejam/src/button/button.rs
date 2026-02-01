@@ -62,7 +62,7 @@ impl Button {
         if name == "no" {
             rect!(x = self.hitbox.0, y = self.hitbox.1, w = self.hitbox.2, h = self.hitbox.3, color = 0x22406eff);
         } else {
-            rect!(x = self.hitbox.0, y = self.hitbox.1, w = self.hitbox.2, h = self.hitbox.3, color = c1);
+            rect!(x = self.hitbox.0, y = self.hitbox.1, w = self.hitbox.2, h = self.hitbox.3, color = 0xfae3deff);
         }
     }
 

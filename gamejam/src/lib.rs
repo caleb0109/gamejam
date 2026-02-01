@@ -19,6 +19,7 @@ struct GameState {
     uiButtons:[Button; 4],
 
     pub day: i32,
+    pub dayStart: bool,
     pub currTime: usize,
     pub invenHold: bool,
     pub invenCheck: usize,
@@ -26,6 +27,8 @@ struct GameState {
     pub alibiTime: Vec<usize>,
     pub alibiOrder: Vec<String>,
     pub removed: bool,
+
+    pub talking: String
 }
 
 impl GameState {
@@ -42,6 +45,7 @@ impl GameState {
             ],
 
             day: 0,
+            dayStart: false,
             currTime: 0,
             invenHold: false,
             invenCheck: 0,
@@ -49,6 +53,8 @@ impl GameState {
             alibiTime: Vec::new(),
             alibiOrder: Vec::new(),
             removed: false,
+
+            talking: "".to_string(),
         }
     }
     pub fn update(&mut self) {
@@ -98,6 +104,9 @@ impl GameState {
                  
             }
 
+            if self.talkingCheck() {
+                self.inven.invenB[n].action = false;
+            }
             //trying to check if the inventory item and the interactable space on the map is overlapping
             //still working on this
             for k in 0..self.reader.currMap.interactable.len() {
@@ -170,6 +179,9 @@ impl GameState {
         for n in 0..self.reader.currMap.interactable.len() {
             select = self.reader.currMap.interactable[n].check(select);
 
+            if self.talkingCheck() {
+                self.reader.currMap.interactable[n].action = false;
+            }
             if self.day > 0 {
                 for l in 0..self.reader.currCrime.availPos.len() {
                     if self.reader.currCrime.availPos[l] != self.currTime {
@@ -179,20 +191,40 @@ impl GameState {
              }
             //if the current item on the map is being interacted with
             if self.reader.currMap.interactable[n].action {
+                match self.reader.currMap.interactable[n].text.as_str() {
+                    "--npc1" => {
+                        self.reader.speaking = true;
+                        self.talking = self.reader.currMap.interactable[n].text.clone();
+                        self.reader.currMap.interactable[n].action = false;
+                    }
+                    "--npc2" => {
+                        self.reader.speaking = true;
+                        self.talking = self.reader.currMap.interactable[n].text.clone();
+                        self.reader.currMap.interactable[n].action = false;
+                    }
+                    "" => {
+                        self.reader.currMap.interactable[n].action = false;
+                        break;
+                    }
+
+                    _=> {
+                        self.inven.inven.push(self.reader.currMap.items[n].clone());
+                        self.inven.setButton();
+                        self.reader.currMap.interactable[n].text = "".to_string();
+                        self.reader.currMap.interactable[n].action = false;
+                    }
+                }
                 //if the item has nothing there (why its an empty string), then nothing will happen
                 if self.reader.currMap.interactable[n].text == "" {
                     self.reader.currMap.interactable[n].action = false;
                     break;
-                } 
+                }
                 //otherwise, assuming its an item, push the item into the inventory
                 //load the setButton, so that the inventory shows the new uploaded item
                 //and make the interactable spot empty.
                 //if you want to make a check for a dialogue one, just use an if statement to check the text of that spot
                 else {
-                    self.inven.inven.push(self.reader.currMap.items[n].clone());
-                    self.inven.setButton();
-                    self.reader.currMap.interactable[n].text = "".to_string();
-                    self.reader.currMap.interactable[n].action = false;
+                    
                              
                     }
             }
@@ -204,6 +236,9 @@ impl GameState {
         for n in 0..self.uiButtons.len() {
             select = self.uiButtons[n].check(select);
 
+            if self.talkingCheck() {
+                self.uiButtons[n].action = false;
+            }
             //if there was an action done on an UIButton
             if self.uiButtons[n].action {
                 //check which specific one
@@ -211,6 +246,7 @@ impl GameState {
                     //this one is the serve alibi, proceeds day and level data
                     0 => {
                         self.day += 1;
+                        self.dayStart = true;
                         self.reader.changeLevel(self.day);
                         self.dayCheck = self.reader.currCrime.availPos.clone();
                         self.alibiOrder = vec!["".to_string(); self.reader.currCrime.answerPos.len()];
@@ -274,23 +310,57 @@ impl GameState {
             let mut yoff = 50;
 
             //prints out the interactable items at the specific time only
-            for l in 0..self.reader.currCrime.availPos.len() {
-                if self.reader.currCrime.availPos[l] == self.currTime {
-                    self.reader.currMap.interactable[l].tempDraw("no");
-                    text!("{}", self.reader.currMap.interactable[l].text; x = 100, y = yoff, font = "TENPIXELS", color = 0x2d1e1eff);
-                } else {
-                    self.reader.currMap.interactable[l].tempDraw("hi");
-                }
-                text!("{}", self.reader.currCrime.availPos[l]; x = 10, y = yoff, font = "TENPIXELS", color = 0x2d1e1eff);
-                yoff += 10;
+            for n in 0..self.reader.currMap.interactable.len() {
+                self.reader.currMap.interactable[n].tempDraw("hi");
             }
+            // for l in 0..self.reader.currCrime.availPos.len() {
+            //     if self.reader.currCrime.availPos[l] == self.currTime {
+            //         self.reader.currMap.interactable[l].tempDraw("no");
+            //         text!("{}", self.reader.currMap.interactable[l].text; x = 100, y = yoff, font = "TENPIXELS", color = 0x2d1e1eff);
+            //     } else {
+            //         self.reader.currMap.interactable[l].tempDraw("hi");
+            //     }
+            //     text!("{}", self.reader.currCrime.availPos[l]; x = 10, y = yoff, font = "TENPIXELS", color = 0x2d1e1eff);
+            //     yoff += 10;
+            // }
             text!("{}", self.reader.currCrime.availPos[0]; x = 10, y = 50, font = "TENPIXELS", color = 0x2d1e1eff);
             for n in 0..self.alibiOrder.len() {
                 text!("{:?}", self.alibiOrder[n]; x = 20, y = yoff + 300, font = "TENPIXELS", color = 0x2d1e1eff);
                 yoff += 20;
                 text!("{}", self.alibiTime[n]; x = 10, y = yoff + 300, font = "TENPIXELS", color = 0x2d1e1eff);
             }
+
+            if self.dayStart {
+                match self.day {
+                    1 => {
+                        self.reader.drawText(&"--crime1".to_string());
+                        
+                    }
+                    2 => {
+                        self.reader.drawText(&"--crime2".to_string());
+                    }
+                    _=> {}
+                }
+            }
+            if self.reader.speaking && !self.dayStart {
+                self.reader.drawText(&self.talking);
+            }
+            if !self.reader.speaking {
+                self.dayStart = false;
+            }
+            
+            
         }
 
+    }
+
+    pub fn talkingCheck (&mut self) -> bool {
+        let mut check = false;
+        if !self.reader.speaking {
+            check = false;
+        } else {
+            check = true;
+        }
+        return check;
     }
 }

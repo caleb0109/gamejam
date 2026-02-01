@@ -14,8 +14,8 @@ Your everyday carrot
 220.0
 Flower Pot
 Pot with dandelions
-570
-180
+570.0
+180.0
 Hi
 A wave
 400.0
@@ -40,5 +40,12 @@ Hi
 2
 2
 0
+2
+--npc1
+380.0
+270.0
+--npc2
+300.0
+200.0
 
 --crime2
