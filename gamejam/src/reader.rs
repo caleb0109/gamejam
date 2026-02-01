@@ -171,7 +171,8 @@ impl Reader {
         
             
         if self.speaking == true {
-            //sprite!("speechbubble", x = 256, y= 114);
+            sprite!("mc_portrait", x = 143, y = 376);
+            sprite!("textbubble", x = 253, y= 376);
                 text_box!{
                     text,
                     font = "FIVEPIXELS",
