@@ -9,6 +9,7 @@ pub struct Button {
     pub text: String,
     pub hovered: bool,
     pub action: bool,
+    pub hold: bool,
 }
 
 impl Button {
@@ -18,6 +19,7 @@ impl Button {
             text: text.to_string(), // button text
             hovered: false, // hover state
             action: act, //checks if specific button was pressed or not
+            hold: false,
         }
     }
 
@@ -25,12 +27,12 @@ impl Button {
     //will add a additional variable in parameter to see check if
     //the button thats being drawn is an ingredient or not
     //(ex. draw(&self, name: &str))
-    pub fn draw(&self) {
+    pub fn draw(&self, text: String) {
         //draws button and highlighted button
         let highlight = format!("{}_highlight", &self.text);
         match self.hovered {
             true => sprite!(&highlight, x = self.hitbox.0 - 1.0, y = self.hitbox.1 - 1.0),
-            false => sprite!(&self.text, x = self.hitbox.0, y = self.hitbox.1)
+            false => sprite!(&text, x = self.hitbox.0, y = self.hitbox.1)
         };
     }
 
@@ -57,8 +59,11 @@ impl Button {
             self.hitbox.1 + (self.hitbox.3/2.0) - 3.0);
 
         // Draw button
-        rect!(x = self.hitbox.0, y = self.hitbox.1, w = self.hitbox.2, h = self.hitbox.3, color = c1)
-        
+        if self.text == "no" {
+            rect!(x = self.hitbox.0, y = self.hitbox.1, w = self.hitbox.2, h = self.hitbox.3, color = 0x22406eff);
+        } else {
+            rect!(x = self.hitbox.0, y = self.hitbox.1, w = self.hitbox.2, h = self.hitbox.3, color = c1);
+        }
     }
 
     //checks if the mouse is hovering the button or not
@@ -71,6 +76,10 @@ impl Button {
         if self.hover(self.hitbox, x, y) {
             if m.just_pressed(){
                 self.action = true; // Call function local to button
+                return (self.hitbox.0, self.hitbox.1);
+            } else if m.pressed() && self.text == "inven" {
+                self.action = true; // Call function local to button
+                self.hold = true;
                 return (self.hitbox.0, self.hitbox.1);
             } else {
                 self.action = false;

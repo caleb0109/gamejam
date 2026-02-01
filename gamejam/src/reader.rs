@@ -25,7 +25,7 @@ impl Reader {
             dLines: DATA_PATH.split("\r\n").map(|line| line.to_string()).collect(),
             current_line_s: 0,
             current_line_d: 0,
-            currCrime: Crime::new("", Vec::new(), ""),
+            currCrime: Crime::new("", Vec::new()),
             currMap: Map::new(Vec::new(), Vec::new()),
         }
     }
@@ -80,8 +80,21 @@ impl Reader {
             self.current_line_d += 1;
             self.currMap.interactable.push(Button::new(&iName, (x,y, 20.0,20.0), false));
         }
-
         
+        for n in 0..itemNum {
+            self.currCrime.answerKey.push(self.dLines[self.current_line_d].clone());
+            self.current_line_d += 1;
+            self.currCrime.answerTime.push(self.dLines[self.current_line_d].parse::<usize>().unwrap());
+            self.current_line_d +=1;
+            self.currCrime.answerPos.push(self.dLines[self.current_line_d].parse::<usize>().unwrap());
+            self.current_line_d += 1;
+        }
+
+        for n in 0..itemNum {
+            self.currCrime.availPos.push(self.dLines[self.current_line_d].parse::<usize>().unwrap());
+            self.current_line_d +=1;
+        }
+
 
     }
 }
