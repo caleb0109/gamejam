@@ -83,9 +83,11 @@ impl GameState {
             for k in 0..self.reader.currMap.interactable.len() {
                 let hitbox1 = self.reader.currMap.interactable[k].hitbox;
                 let hitbox2 = self.inven.invenB[n].hitbox;
+
                 if self.reader.currMap.interactable[k].hover(hitbox1, x, y) &&
                 self.inven.invenB[n].hover(hitbox2, x, y) && m.just_released() &&
-                self.reader.currMap.interactable[k].text == "" && self.invenHold{
+                self.reader.currMap.interactable[k].text == "" && self.invenHold
+                {
                     self.inven.inven.remove(k);
 
                 } 
@@ -160,7 +162,7 @@ impl GameState {
                     }
             }
             //temp draw
-            self.reader.currMap.interactable[n].tempDraw("hi");
+            
         }
         
         //checking all UIButtons
@@ -227,12 +229,16 @@ impl GameState {
             } else {
                 text!("{} PM", self.reader.currMap.timeP[self.currTime]*(-1); x = 110, y = 120, font = "TENPIXELS", color = 0x2d1e1eff);
             }
-            // for l in 0..self.reader.currCrime.availPos.len() {
-            //     if self.reader.currCrime.availPos[l] == self.currTime {
-            //         self.reader.currMap.interactable[l].tempDraw("no");
-            //     }
-            //     text!("{}", self.reader.currCrime.availPos[l]; x = 10, y = 50, font = "TENPIXELS", color = 0x2d1e1eff);
-            // }
+            let mut yoff = 50;
+
+            //prints out the interactable items at the specific time only
+            for l in 0..self.reader.currCrime.availPos.len() {
+                if self.reader.currCrime.availPos[l] == self.currTime {
+                    self.reader.currMap.interactable[l].tempDraw("no");
+                }
+                text!("{}", self.reader.currCrime.availPos[l]; x = 10, y = yoff, font = "TENPIXELS", color = 0x2d1e1eff);
+                yoff += 10;
+            }
             text!("{}", self.reader.currCrime.availPos[0]; x = 10, y = 50, font = "TENPIXELS", color = 0x2d1e1eff);
         }
 
