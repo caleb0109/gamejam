@@ -79,9 +79,9 @@ impl Reader {
     /// ANSWERKEY ORDER
     /// ANSWERTIME ORDER
     /// ANSWERPOSTION ORDER
-    /// AVAILABLEPOSITION ORDER
     /// EXTRA INTERACTABLES AMOUNT
     /// EXTRA INTERACTABLE AND THEIR COORDINATES(ie. talkable npcs)
+    /// AVAILABLEPOSITION ORDER
     pub fn updateData(&mut self) {
         //gets name
         let name = self.dLines[self.current_line_d].clone();

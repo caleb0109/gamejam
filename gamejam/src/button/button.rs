@@ -27,13 +27,18 @@ impl Button {
     //will add a additional variable in parameter to see check if
     //the button thats being drawn is an ingredient or not
     //(ex. draw(&self, name: &str))
-    pub fn draw(&self) {
+    pub fn draw(&self, noH: bool) {
         //draws button and highlighted button
         let highlight = format!("{}_highlight", &self.text);
-        match self.hovered {
-            true => sprite!(&highlight, x = self.hitbox.0 - 1.0, y = self.hitbox.1 - 1.0),
-            false => sprite!(&self.text, x = self.hitbox.0, y = self.hitbox.1)
-        };
+        if noH {
+            sprite!(&self.text, x = self.hitbox.0, y = self.hitbox.1);
+        } else if !noH {
+            match self.hovered {
+                true => sprite!(&highlight, x = self.hitbox.0 - 1.0, y = self.hitbox.1 - 1.0),
+                false => sprite!(&self.text, x = self.hitbox.0, y = self.hitbox.1)
+            };
+        }
+        
     }
 
     pub fn nonselect(&self) {
@@ -62,7 +67,7 @@ impl Button {
         if name == "no" {
             rect!(x = self.hitbox.0, y = self.hitbox.1, w = self.hitbox.2, h = self.hitbox.3, color = 0x22406eff);
         } else {
-            rect!(x = self.hitbox.0, y = self.hitbox.1, w = self.hitbox.2, h = self.hitbox.3, color = 0xfae3deff);
+            rect!(x = self.hitbox.0, y = self.hitbox.1, w = self.hitbox.2, h = self.hitbox.3, color = c1);
         }
     }
 
@@ -74,12 +79,15 @@ impl Button {
         let x = mx as f32;
         let y = my as f32;
         if self.hover(self.hitbox, x, y) {
-            if m.just_pressed(){
+            if m.pressed() {
+                match self.text.as_str() {
+                    "phone_inven" => {self.hold = true;}
+                    "money_inven" => {self.hold = true;}
+                    "flower_inven" => {self.hold = true;}
+                    "dummy" => {self.hold = true;}
+                    _=> {}
+                }
                 self.action = true; // Call function local to button
-                return (self.hitbox.0, self.hitbox.1);
-            } else if m.pressed() && self.text == "inven" {
-                self.action = true; // Call function local to button
-                self.hold = true;
                 return (self.hitbox.0, self.hitbox.1);
             } else {
                 self.action = false;

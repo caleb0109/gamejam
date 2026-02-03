@@ -151,6 +151,8 @@ impl GameState {
                 self.removed = false;
                 break;
             }
+
+            text!("{}", self.inven.invenB[n].hold; x = 0.0, y = 0.0);
             //keeping the origin in case i need to make the item return to its original spot
             let origin = self.inven.invenB[n].hitbox;
 
@@ -190,7 +192,7 @@ impl GameState {
             }
 
             //temp draw the item
-            self.inven.invenB[n].tempDraw("name");
+            self.inven.invenB[n].draw(true);
             text!("{}", self.inven.inven[n].name; x = self.inven.invenB[n].hitbox.0,y = self.inven.invenB[n].hitbox.0,);
         }
 
@@ -212,15 +214,38 @@ impl GameState {
             //if the current item on the map is being interacted with
             if self.reader.currMap.interactable[n].action {
                 match self.reader.currMap.interactable[n].text.as_str() {
-                    "--npc1" => {
-                        self.reader.speaking = true;
-                        self.talking = self.reader.currMap.interactable[n].text.clone();
-                        self.reader.currMap.interactable[n].action = false;
+                    "kai1" => {
+                        self.npcInteract(n);
                     }
-                    "--npc2" => {
-                        self.reader.speaking = true;
-                        self.talking = self.reader.currMap.interactable[n].text.clone();
-                        self.reader.currMap.interactable[n].action = false;
+                    "kai2" => {
+                        self.npcInteract(n);
+                    }
+                    "mia1" => {
+                        self.npcInteract(n);
+                    }
+                    "mia2" => {
+                        self.npcInteract(n);
+                    }
+                    "mia3" => {
+                        self.npcInteract(n);
+                    }
+                    "mia4" => {
+                        self.npcInteract(n);
+                    }
+                    "cat1" => {
+                        self.npcInteract(n);
+                    }
+                    "cat2" => {
+                        self.npcInteract(n);
+                    }
+                    "brokenflower" => {
+                        self.npcInteract(n);
+                    }
+                    "mom"=> {
+                        self.npcInteract(n);
+                    }
+                    "momcat" => {
+                        self.npcInteract(n);
                     }
                     "" => {
                         self.reader.currMap.interactable[n].action = false;
@@ -228,10 +253,16 @@ impl GameState {
                     }
 
                     _=> {
+                        if self.day == 1 {
+                            self.inven.inven.push(Item::new("dummy", "fake of the suspect"));
+                            self.inven.setButton();
+                        }
                         self.inven.inven.push(self.reader.currMap.items[n].clone());
                         self.inven.setButton();
                         self.reader.currMap.interactable[n].text = "".to_string();
                         self.reader.currMap.interactable[n].action = false;
+                        
+                        
                     }
                 }
                 //if the item has nothing there (why its an empty string), then nothing will happen
@@ -271,7 +302,6 @@ impl GameState {
                         self.dayCheck = self.reader.currCrime.availPos.clone();
                         self.alibiOrder = vec!["".to_string(); self.reader.currCrime.answerPos.len()];
                         self.alibiTime = vec![0; self.reader.currCrime.answerTime.len()];
-                        self.inven.inven.push(Item::new("Dummy", "fake of the suspect"));
                         self.inven.setButton();
                         self.uiButtons[n].action = false;
                     }
@@ -307,9 +337,9 @@ impl GameState {
             }
             //just drawing
             if n == 0 {
-                self.uiButtons[n].draw();
+                self.uiButtons[n].draw(false);
             } else {
-                self.uiButtons[n].draw();
+                self.uiButtons[n].draw(false);
             }
         }
 
@@ -331,20 +361,15 @@ impl GameState {
             }
             let mut yoff = 50;
 
-            //prints out the interactable items at the specific time only
-            for n in 0..self.reader.currMap.interactable.len() {
-                self.reader.currMap.interactable[n].tempDraw("hi");
+
+            for l in 0..self.reader.currCrime.availPos.len() {
+                if self.reader.currCrime.availPos[l] == self.currTime {
+                    self.reader.currMap.interactable[l].draw(true);
+                    text!("{}", self.reader.currMap.interactable[l].text; x = 100, y = yoff, font = "TENPIXELS", color = 0x2d1e1eff);
+                } 
+                text!("{}", self.reader.currCrime.availPos[l]; x = 10, y = yoff, font = "TENPIXELS", color = 0x2d1e1eff);
+                yoff += 10;
             }
-            // for l in 0..self.reader.currCrime.availPos.len() {
-            //     if self.reader.currCrime.availPos[l] == self.currTime {
-            //         self.reader.currMap.interactable[l].tempDraw("no");
-            //         text!("{}", self.reader.currMap.interactable[l].text; x = 100, y = yoff, font = "TENPIXELS", color = 0x2d1e1eff);
-            //     } else {
-            //         self.reader.currMap.interactable[l].tempDraw("hi");
-            //     }
-            //     text!("{}", self.reader.currCrime.availPos[l]; x = 10, y = yoff, font = "TENPIXELS", color = 0x2d1e1eff);
-            //     yoff += 10;
-            // }
             text!("{}", self.reader.currCrime.availPos[0]; x = 10, y = 50, font = "TENPIXELS", color = 0x2d1e1eff);
             for n in 0..self.alibiOrder.len() {
                 text!("{:?}", self.reader.currCrime.answerKey[n]; x = 30, y = yoff + 300, font = "TENPIXELS", color = 0x2d1e1eff);
@@ -391,5 +416,11 @@ impl GameState {
             check = true;
         }
         return check;
+    }
+
+    pub fn npcInteract (&mut self, n: usize) {
+        self.reader.speaking = true;
+        self.talking = self.reader.currMap.interactable[n].text.clone();
+        self.reader.currMap.interactable[n].action = false;
     }
 }

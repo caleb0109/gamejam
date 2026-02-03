@@ -18,7 +18,13 @@ impl Inventory {
 
     pub fn setButton(&mut self) {
         for n in 0..self.inven.len() {
-            self.invenB.push(Button::new("inven", (34.0, 180.0, 51.0, 51.0), false));
+            match self.inven[n].name.as_str() {
+                "money" => {self.inven[n].name = "money_inven".to_string();}
+                "flower" => {self.inven[n].name = "flower_inven".to_string();}
+                "phone" => {self.inven[n].name = "phone_inven".to_string();}
+                _=> {}
+            }
+            self.invenB.push(Button::new(&self.inven[n].name, (34.0, 180.0, 51.0, 51.0), false));
         }
     }
 
